@@ -36,4 +36,6 @@ void messageBoxError(QString errorText);
 
 void messageBoxSuccess(QWidget* parent, QString successText);
 
+bool pathsFound(dataPath& path);
+
 #endif // SUBMISSIONCHECKS_H

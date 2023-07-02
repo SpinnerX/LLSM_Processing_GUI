@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <QtCore>
 #include <QThread>
-
+#include "mainwindowConsoleOutputWindow.h"
 //using namespace matlab::engine;
 
 class matlabThreadManager : public QThread
@@ -17,6 +17,7 @@ public:
     matlabThreadManager(QMutex &outputLock, QObject *parent = 0);
     ~matlabThreadManager();
     void killMatlabThreadManager();
+    std::string str();
     void run();
 public slots:
     void onJobStart(std::string &args, QString &funcType, std::tuple<QString, QString, bool> &mPathJNameParseCluster, std::unordered_map<int,std::pair<QString,QDateTime>> &jobLogPaths, bool isMcc, const std::string &pathToMatlab);
@@ -38,7 +39,8 @@ private:
     std::string pathToMatlab;
 
     bool killThread;
-
+    std::ostringstream jobsOutput;
+    std::streambuf* old;
 };
 
 #endif // MATLABTHREADMANAGER_H

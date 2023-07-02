@@ -33,7 +33,8 @@ HEADERS += \
            simreconjobadvanced.h \
            simreconmainadvanced.h \
            simreconreconadvanced.h \
-           submissionchecks.h
+           submissionchecks.h       \
+           mainwindowConsoleOutputWindow.h
 
 FORMS += \
          configfilecreator.ui \
@@ -79,7 +80,8 @@ SOURCES += \
            simreconjobadvanced.cpp \
            simreconmainadvanced.cpp \
            simreconreconadvanced.cpp \
-           submissionchecks.cpp
+           submissionchecks.cpp     \
+           mainwindowConsoleOutputWindow.cpp
 
 RESOURCES += \
     resources.qrc

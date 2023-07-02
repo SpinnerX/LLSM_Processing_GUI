@@ -84,6 +84,27 @@ MainWindow::MainWindow(QWidget *parent)
     //QCoreApplication::setApplicationVersion(VERSION_STRING);
     //if(savedVersion == QCoreApplication::applicationVersion()){
     // Restore previous settings if user says yes
+
+    matlabJobLogsOutputWindow = new mainwindowConsoleOutputWindow(QString("Job Logs"), outputLock, this);
+    terminalConsoleOutput = new mainwindowConsoleOutputWindow(QString("Output"), outputLock, this);
+
+
+    int fixedWidth = 300;
+
+    matlabJobLogsOutputWindow->setAllowedAreas(Qt::RightDockWidgetArea | Qt::LeftDockWidgetArea); // Allows default position of attached window to right of mainwindow
+    matlabJobLogsOutputWindow->setFixedWidth(fixedWidth); // Default width to 300
+    matlabJobLogsOutputWindow->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable); // removes the x button in left corner.
+    matlabJobLogsOutputWindow->setProperty("setting readable", false);
+
+    terminalConsoleOutput->setAllowedAreas(Qt::RightDockWidgetArea | Qt::LeftDockWidgetArea);
+    terminalConsoleOutput->setFixedWidth(fixedWidth);
+    terminalConsoleOutput->setFeatures(QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetMovable);
+    terminalConsoleOutput->setProperty("Matlab Thread Output Setting readable", false);
+
+    addDockWidget(Qt::RightDockWidgetArea, matlabJobLogsOutputWindow);
+    addDockWidget(Qt::LeftDockWidgetArea, terminalConsoleOutput);
+
+
     readConfigSettings();
     checkLoadPrevSettings();
     if(loadSettings) readSettings();
@@ -102,10 +123,13 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tabWidget->setCurrentWidget(ui->Main);
 
     // Job Output
+    matlabJobLogsOutputWindow->uploadJobLogs(mOutputWindow);
+    /*
     if(!mOutputWindow->isVisible()){
         mOutputWindow->setModal(false);
         mOutputWindow->show();
     }
+    */
 }
 
 MainWindow::~MainWindow()
@@ -1935,6 +1959,8 @@ void MainWindow::on_submitButton_clicked()
             }
         }
     }
+
+    terminalConsoleOutput->printLogStdString(mThreadManager->str());
 
     // Reset jobLogDir
     guiVals.jobLogDir = jobLogCopy;

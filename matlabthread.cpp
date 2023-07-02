@@ -6,7 +6,7 @@
 matlabThread::matlabThread(QObject *parent, const QString &funcType, const size_t &outA, const std::string &args, std::tuple<QString, QString, bool> &mPathJNameParseCluster, const unsigned int &mThreadID, bool isMcc, const std::string &pathToMatlab) :
     QThread(parent), funcType(funcType), outA(outA), args(args), mPathJNameParseCluster(mPathJNameParseCluster), mThreadID(mThreadID), isMcc(isMcc), pathToMatlab(pathToMatlab)
 {
-    job = NULL;
+    job = nullptr;
     killThread = 0;
 }
 
@@ -24,6 +24,8 @@ matlabThread::~matlabThread(){
     }
     killThread = 1;
 }
+
+std::string matlabThread::str() { return ""; }
 
 void matlabThread::killMatlabThread(){
     killThread = 1;
@@ -59,7 +61,7 @@ void matlabThread::run(){
         #elif _WIN32
         std::string mccLoc = "\""+QCoreApplication::applicationDirPath().toStdString()+"/LLSM5DTools/mcc/windows/mccMaster\"";
         #else
-
+        std::string mccLoc = "";
         #endif
         matlabCmd.append(mccLoc);
 
@@ -75,13 +77,16 @@ void matlabThread::run(){
     //std::cout << matlabCmd << std::endl;
     //jobSuccess = !system(matlabCmd.c_str());
     job = new QProcess(this);
-    job->setProcessChannelMode(QProcess::ForwardedChannels);
     job->startCommand(QString::fromStdString(matlabCmd));
-    bool jobFinished = false;
-    while(!jobFinished){
-        if(killThread) return;
-        jobFinished = job->waitForFinished(1000);
-    }
+    job->setProcessChannelMode(QProcess::ForwardedChannels);
+    job->waitForFinished(-1);
+
+    // QString outStr = QString(job->readAllStandardOutput());
+    // QString errStr = QString(job->readAllStandardError());
+    // std::cout << outStr.toStdString() << '\n';
+    // std::cout << errStr.toStdString() << '\n';
+    std::cout << QString(job->readAllStandardOutput()).toStdString() << '\n';
+    std::cout << QString(job->readAllStandardError()).toStdString() << '\n';
     jobSuccess = !(job->exitCode());
 
 

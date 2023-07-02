@@ -11,12 +11,18 @@ class matlabThread : public QThread
 public:
     matlabThread(QObject *parent, const QString &funcType, const size_t &outA, const std::string &args, std::tuple<QString, QString, bool> &mPathJNameParseCluster, const unsigned int &mThreadID, bool isMcc, const std::string &pathToMatlab);
     ~matlabThread();
+
+    std::string str();
+
     void killMatlabThread();
     void run();
 public slots:
 
 signals:
     void jobFinish(bool jobFinished);
+private:
+    void capturingOutput();
+
 private:
     //matlabOutputThread* mOutThread;
     //std::unique_ptr<MATLABEngine> matlabPtr;

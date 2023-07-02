@@ -11,7 +11,7 @@
 #include <QFileInfo>
 #include <QThread>
 #include <QMessageBox>
-
+#include "mainwindowConsoleOutputWindow.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -470,5 +470,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    mainwindowConsoleOutputWindow* matlabJobLogsOutputWindow;
+    mainwindowConsoleOutputWindow* terminalConsoleOutput;
 };
 #endif // MAINWINDOW_H

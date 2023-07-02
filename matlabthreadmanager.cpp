@@ -9,7 +9,7 @@
 matlabThreadManager::matlabThreadManager(QMutex &outputLock, QObject *parent) :
     QThread(parent), outputLock(&outputLock), jobLogPaths(nullptr), outA(1), killThread(0)
 {
-
+    old = std::cout.rdbuf(jobsOutput.rdbuf());
 }
 
 matlabThreadManager::~matlabThreadManager(){
@@ -23,12 +23,15 @@ matlabThreadManager::~matlabThreadManager(){
         }
     }
     killThread = 1;
+    std::cout.rdbuf(old);
     this->wait();
 }
 
 void matlabThreadManager::killMatlabThreadManager(){
     killThread = 1;
 }
+
+std::string matlabThreadManager::str() { return jobsOutput.str(); }
 
 void matlabThreadManager::run(){
 
@@ -54,9 +57,7 @@ void matlabThreadManager::run(){
     outputLock->unlock();
 
     mThreads[mThreadID]->start(QThread::TimeCriticalPriority);
-
-
-
+    std::cout << mThreads[mThreadID]->str() << '\n';
     // Add path/button to Output Window
     //emit addOutputIDAndPath(mThreadID, mainPath);
 
