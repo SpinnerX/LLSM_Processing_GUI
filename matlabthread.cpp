@@ -25,8 +25,6 @@ matlabThread::~matlabThread(){
     killThread = 1;
 }
 
-std::string matlabThread::str() { return ""; }
-
 void matlabThread::killMatlabThread(){
     killThread = 1;
 }
