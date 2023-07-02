@@ -29,37 +29,8 @@
  * 
  * 
  * This class is what creates the side window.
- * Which we can use throughout the codebase, if we ever want other code to simply call this header*/
-
-
-/**
- * @brief 
- * 
- * Update -
- * 
- * This class handles redirecting output onto the mainwindowConsoleOutputWindow
- * 
- *  - Since, mainwindowConsoleOutputWindow is a QDockWidget, this class will be specified for handling output
- * 
- * 
- * 
- */
-
-class stdoutRedirect{
-public:
-    explicit stdoutRedirect(){
-        old = std::cout.rdbuf(buffer.rdbuf());
-    }
-    ~stdoutRedirect(){
-        std::cout.rdbuf(old);
-    }
-
-    std::string str() { return buffer.str(); }
-
-private:
-    std::stringstream buffer;
-    std::streambuf* old;
-};
+ * Which we can use throughout the codebase, if we ever want other code to simply call this header
+*/
 
 class mainwindowConsoleOutputWindow : public QDockWidget{
 public:
