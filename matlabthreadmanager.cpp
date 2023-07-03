@@ -57,7 +57,6 @@ void matlabThreadManager::run(){
     outputLock->unlock();
 
     mThreads[mThreadID]->start(QThread::TimeCriticalPriority);
-    std::cout << mThreads[mThreadID]->str() << '\n';
     // Add path/button to Output Window
     //emit addOutputIDAndPath(mThreadID, mainPath);
 
