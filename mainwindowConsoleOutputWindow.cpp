@@ -2,13 +2,16 @@
 #include <QTextStream>
 #include <fstream>
 #include <array>
+#include <QProcess>
+
+int mainwindowConsoleOutputWindow::processCounter = 1;
 
 mainwindowConsoleOutputWindow::mainwindowConsoleOutputWindow(const QString&& title, QMutex& outputLock, QWidget* parent) 
         : QDockWidget(parent),
           outputLock(&outputLock){
     
     setWindowTitle(title);
-    consoleEdit = new QTextEdit(this);
+    consoleEdit = new QTextBrowser(this);
     timer = new QTimer(this);
     setWidget(consoleEdit);
 
@@ -30,8 +33,7 @@ void mainwindowConsoleOutputWindow::printLog(QString msg, char delimeter){
 
 void mainwindowConsoleOutputWindow::printLogStdString(std::string msg, char delimeter){
     outputLock->lock();
-    QString str = QString::fromUtf8(msg);
-    consoleEdit->append(str);
+    consoleEdit->append(QString::fromUtf8(msg));
     outputLock->unlock();
 }
 
@@ -53,6 +55,10 @@ void mainwindowConsoleOutputWindow::uploadJobLogs(matlabOutputWindow *jobLogsOut
     }
 }
 
+/*
+    When to lock and unlock depends on this function
+
+*/
 void mainwindowConsoleOutputWindow::updateTimer(){
     outputLock->lock();
     /**
@@ -98,4 +104,11 @@ void mainwindowConsoleOutputWindow::updateTimer(){
    }
 
    outputLock->unlock();
+}
+
+void mainwindowConsoleOutputWindow::printStdout(QString str){
+    outputLock->lock();
+    consoleEdit->append(QString::fromUtf8("Running Process  #" + std::to_string(mainwindowConsoleOutputWindow::processCounter++)));
+    consoleEdit->append(str);
+    outputLock->unlock();
 }
