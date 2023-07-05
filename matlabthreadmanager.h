@@ -21,9 +21,11 @@ public:
     void run();
 public slots:
     void onJobStart(std::string &args, QString &funcType, std::tuple<QString, QString, bool> &mPathJNameParseCluster, std::unordered_map<int,std::pair<QString,QDateTime>> &jobLogPaths, bool isMcc, const std::string &pathToMatlab);
+    void onProcessOutputSignal(QByteArray data);
 signals:
     void enableSubmitButton();
-    void addOutputIDAndPath(const unsigned int mThreadID, const QString mainPath);
+    // void availableOutput(QString output);
+    void availableOutput(QString str);
 private:
     std::string args;
     std::unordered_map<unsigned int, matlabThread*> mThreads;
@@ -41,6 +43,9 @@ private:
     bool killThread;
     std::ostringstream jobsOutput;
     std::streambuf* old;
+    std::vector<QProcess *> processors;
+    std::vector<std::string> commands; // commands to execute script.
+    std::vector<std::vector<QString> > childThreadsOutput; // This contains output from each thread.
 };
 
 #endif // MATLABTHREADMANAGER_H
