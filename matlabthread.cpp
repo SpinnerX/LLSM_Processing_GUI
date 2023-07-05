@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <regex>
 #include "matlabthread.h"
+#include "mainwindowConsoleOutputWindow.h"
 
 matlabThread::matlabThread(QObject *parent, const QString &funcType, const size_t &outA, const std::string &args, std::tuple<QString, QString, bool> &mPathJNameParseCluster, const unsigned int &mThreadID, bool isMcc, const std::string &pathToMatlab) :
     QThread(parent), funcType(funcType), outA(outA), args(args), mPathJNameParseCluster(mPathJNameParseCluster), mThreadID(mThreadID), isMcc(isMcc), pathToMatlab(pathToMatlab)
@@ -75,19 +76,15 @@ void matlabThread::run(){
     //std::cout << matlabCmd << std::endl;
     //jobSuccess = !system(matlabCmd.c_str());
     job = new QProcess(this);
-    job->startCommand(QString::fromStdString(matlabCmd));
-    job->setProcessChannelMode(QProcess::ForwardedChannels);
-    job->waitForFinished(-1);
+    job->setProcessChannelMode(QProcess::MergedChannels);
+    job->startCommand(QString::fromUtf8(matlabCmd));
+    job->waitForFinished();
 
-    // QString outStr = QString(job->readAllStandardOutput());
-    // QString errStr = QString(job->readAllStandardError());
-    // std::cout << outStr.toStdString() << '\n';
-    // std::cout << errStr.toStdString() << '\n';
-    std::cout << QString(job->readAllStandardOutput()).toStdString() << '\n';
-    std::cout << QString(job->readAllStandardError()).toStdString() << '\n';
+    // We are emitting the output from jobs of each thread to connect to the thread manager. This is how we connect each of this output from matlabThreadManager to the MainWindow.
+    emit availableOutput(QString(job->readAll()));
+
     jobSuccess = !(job->exitCode());
-
-
+    
     if(jobSuccess) std::cout << "Matlab Job \"" << std::get<1>(mPathJNameParseCluster).toStdString() << "\" Finished" << std::endl;
     else{
         //if(std::get<2>(mPathJNameParseCluster))
