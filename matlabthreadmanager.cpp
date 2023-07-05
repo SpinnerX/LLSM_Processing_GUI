@@ -31,7 +31,7 @@ void matlabThreadManager::killMatlabThreadManager(){
     killThread = 1;
 }
 
-std::string matlabThreadManager::str() { return jobsOutput.str(); }
+std::string matlabThreadManager::str(){ return jobsOutput.str(); }
 
 void matlabThreadManager::run(){
 
@@ -48,6 +48,13 @@ void matlabThreadManager::run(){
         sleep(1);
     }
 
+    /*
+     * @brief
+     * 
+     * while iterateAllThreads
+     *      job.readAllStdOutput()
+     * 
+    */
     // Create new matlab thread
     mThreads.emplace(mThreadID, new matlabThread(this, funcType, outA, args, mPathJNameParseCluster, mThreadID, isMcc, pathToMatlab));
 
@@ -55,6 +62,8 @@ void matlabThreadManager::run(){
     std::cout << "Matlab Job \"" << std::get<1>(mPathJNameParseCluster).toStdString() << "\" Submitted" << std::endl;
     jobLogPaths->emplace(mThreadID,std::make_pair(std::get<0>(mPathJNameParseCluster),QDateTime::currentDateTime()));
     outputLock->unlock();
+    
+    connect(mThreads[mThreadID], &matlabThread::availableOutput, this, &matlabThreadManager::availableOutput);
 
     mThreads[mThreadID]->start(QThread::TimeCriticalPriority);
     // Add path/button to Output Window
@@ -80,3 +89,7 @@ void matlabThreadManager::onJobStart(std::string &args, QString &funcType, std::
     this->pathToMatlab = pathToMatlab;
 }
 
+void matlabThreadManager::onProcessOutputSignal(QByteArray data){
+    std::cout << "OUTPUT\n\n\n";
+    std::cout << QString(data).toStdString() << '\n';
+}
