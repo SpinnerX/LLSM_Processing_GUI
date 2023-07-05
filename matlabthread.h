@@ -17,8 +17,7 @@ public slots:
 
 signals:
     void jobFinish(bool jobFinished);
-private:
-    void capturingOutput();
+    void availableOutput(QString str);
 
 private:
     //matlabOutputThread* mOutThread;
