@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Matlab Threading and connecting signals/slots
     mThreadManager = new matlabThreadManager(outputLock, this);
-    connect(this, &MainWindow::jobStart, mThreadManager, &matlabThreadManager::onJobStart);
+    connect(this, &MainWindow::jobStart, mThreadManager, &matlabThreadManager::onJobStart); // This is how each job is being posted to the QDockWidget
     connect(mThreadManager, &matlabThreadManager::enableSubmitButton, this, &MainWindow::onEnableSubmitButton);
     mThreadManager->start(QThread::HighestPriority);
 
@@ -103,6 +103,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     addDockWidget(Qt::RightDockWidgetArea, matlabJobLogsOutputWindow);
     addDockWidget(Qt::LeftDockWidgetArea, terminalConsoleOutput);
+    connect(mThreadManager, &matlabThreadManager::availableOutput, terminalConsoleOutput, &mainwindowConsoleOutputWindow::printStdout); // connect output to this QDockWidget to redirect the flow of output
 
 
     readConfigSettings();
@@ -124,6 +125,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Job Output
     matlabJobLogsOutputWindow->uploadJobLogs(mOutputWindow);
+
     /*
     if(!mOutputWindow->isVisible()){
         mOutputWindow->setModal(false);
@@ -1960,7 +1962,7 @@ void MainWindow::on_submitButton_clicked()
         }
     }
 
-    terminalConsoleOutput->printLogStdString(mThreadManager->str());
+   terminalConsoleOutput->printLogStdString(mThreadManager->str());
 
     // Reset jobLogDir
     guiVals.jobLogDir = jobLogCopy;
@@ -3711,4 +3713,3 @@ void MainWindow::on_largeScaleProcessingButton_clicked()
     lspSettings.setModal(true);
     lspSettings.exec();
 }
-
