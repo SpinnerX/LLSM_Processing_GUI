@@ -38,7 +38,7 @@ private slots:
         QTest::newRow("negative value") << "-42" << -42;
         QTest::newRow("zero") << "0" << 0;
 
-        // QTest::keyClicks(ui->customPatternsLineEdit, "Hi");
+        QTest::keyClicks(ui->customPatternsLineEdit, "Hi");
     }
 
 private:
