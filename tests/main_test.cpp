@@ -27,8 +27,7 @@ public:
 
 private slots:
 
-    void testingCaseVisibility() {
-    }
+    void testingCaseVisibility() { }
 
     // Just testing that QTest is working successfully, and test cases are visible
     void checkQTestConfiguredSuccessfully(){
